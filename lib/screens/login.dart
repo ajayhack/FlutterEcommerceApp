@@ -93,7 +93,7 @@ class LogIn extends State<Login> {
                         textColor: Colors.white,
                         color: Colors.green,
                         onPressed: () {
-                          doLogin();
+                          doLogin(context);
                         },
                         child: Text(
                           'Login',
@@ -113,18 +113,16 @@ class LogIn extends State<Login> {
     );
   }
 
-  doLogin() async {
+  doLogin(BuildContext context) async {
     var login = await dbHelper.checkLogin(
         userNameController.text, passwordController.text);
     print('Login Success: $login');
     addBoolToSF();
     if (login > 0)
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DashboardScreen()),
-      );
-    else
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardScreen()),);
+    else {
       print('Login Failed: $login');
+    }
   }
 
   addBoolToSF() async {

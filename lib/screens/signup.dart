@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/login.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -132,10 +133,17 @@ class SignIn extends State<SignUp> {
   }
 
   doSignUp() {
-    if (passwordController.text == confirmPasswordController.text)
+    if(fullNameController.text.isEmpty){
+      userValidationToast("Full Name field should not be empty" , Colors.red , Colors.white);
+    }else if(passwordController.text.isEmpty){
+      userValidationToast("Password field should not be empty" , Colors.red , Colors.white);
+    }else if(confirmPasswordController.text.isEmpty){
+      userValidationToast("Confirm Password field should not be empty" , Colors.red , Colors.white);
+    }else if(passwordController.text == confirmPasswordController.text){
+      userValidationToast("Password and Confirm Password field must be same" , Colors.red , Colors.white);
+    }else{
       insert();
-    else
-      log('signUpError: Password Not Matches');
+    }
   }
 
   void insert() async {
@@ -154,9 +162,19 @@ class SignIn extends State<SignUp> {
     };
     final id = await dbHelper.insert(row);
     print('inserted row id: $id');
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Login()),
-    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()),);
   }
+
+  //Below method is used to show Toast Message in App:-
+ userValidationToast(String validMsg , Color validBackGroundColor , Color validTextColor){
+   Fluttertoast.showToast(
+       msg: validMsg,
+       toastLength: Toast.LENGTH_SHORT,
+       gravity: ToastGravity.BOTTOM,
+       timeInSecForIos: 1,
+       backgroundColor: validBackGroundColor,
+       textColor: validTextColor,
+       fontSize: 16.0
+   );
+}
 }
