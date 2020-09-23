@@ -42,9 +42,15 @@ dependencies:
   #The Following Dependency is used for showing Toast Message in App:-
   fluttertoast: ^3.1.3
 
+  #The Following Dependency is used for showing SplashScreen in App:-
+  flutter_native_splash: ^0.1.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  #The Following Dependency is used for showing SplashScreen in App:-
+  flutter_native_splash: ^0.1.9
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

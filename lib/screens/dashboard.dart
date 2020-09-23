@@ -1,6 +1,7 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -11,6 +12,12 @@ class DashboardScreen extends StatefulWidget {
 
 class DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    welcomeMsgShow("Welcome Back to the Indian Ecommerce Shop" , Colors.green , Colors.white);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -437,5 +444,18 @@ class DashboardScreenState extends State<DashboardScreen> {
   void _showSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
     Scaffold.of(context).showSnackBar(snackBar);
+  }
+
+  //Below method is used to show Login Validation Toast Message in App:-
+  welcomeMsgShow(String validMsg , Color validBackGroundColor , Color validTextColor){
+    Fluttertoast.showToast(
+        msg: validMsg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: validBackGroundColor,
+        textColor: validTextColor,
+        fontSize: 16.0
+    );
   }
 }

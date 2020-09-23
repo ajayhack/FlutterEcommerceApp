@@ -112,7 +112,7 @@ class SignIn extends State<SignUp> {
                         textColor: Colors.white,
                         color: Colors.green,
                         onPressed: () {
-                          insert();
+                          doSignUp();
                         },
                         child: Text(
                           'SignUp',
@@ -139,7 +139,7 @@ class SignIn extends State<SignUp> {
       userValidationToast("Password field should not be empty" , Colors.red , Colors.white);
     }else if(confirmPasswordController.text.isEmpty){
       userValidationToast("Confirm Password field should not be empty" , Colors.red , Colors.white);
-    }else if(passwordController.text == confirmPasswordController.text){
+    }else if(passwordController.text != confirmPasswordController.text){
       userValidationToast("Password and Confirm Password field must be same" , Colors.red , Colors.white);
     }else{
       insert();
@@ -161,11 +161,12 @@ class SignIn extends State<SignUp> {
       DatabaseHelper.dateTime: dateTime.toString()
     };
     final id = await dbHelper.insert(row);
+    userValidationToast("User Sign Up successfully" , Colors.green , Colors.white);
     print('inserted row id: $id');
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()),);
   }
 
-  //Below method is used to show Toast Message in App:-
+  //Below method is used to show SignUp Validation Toast Message in App:-
  userValidationToast(String validMsg , Color validBackGroundColor , Color validTextColor){
    Fluttertoast.showToast(
        msg: validMsg,

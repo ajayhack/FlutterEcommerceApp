@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:indian_ecommerce_app/screens/dashboard.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -93,7 +94,7 @@ class LogIn extends State<Login> {
                         textColor: Colors.white,
                         color: Colors.green,
                         onPressed: () {
-                          doLogin(context);
+                          doLogin();
                         },
                         child: Text(
                           'Login',
@@ -113,20 +114,43 @@ class LogIn extends State<Login> {
     );
   }
 
-  doLogin(BuildContext context) async {
-    var login = await dbHelper.checkLogin(
-        userNameController.text, passwordController.text);
-    print('Login Success: $login');
-    addBoolToSF();
-    if (login > 0)
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardScreen()),);
-    else {
-      print('Login Failed: $login');
+  doLogin() async {
+    if(userNameController.text.isEmpty){
+      userValidationToast("UserName field should not be empty", Colors.red, Colors.white);
+    }else if(passwordController.text.isEmpty){
+      userValidationToast("Password field should not be empty", Colors.red, Colors.white);
+    }else {
+      var login = await dbHelper.checkLogin(
+          userNameController.text, passwordController.text);
+      print('Login Success: $login');
+      addBoolToSF();
+      if (login > 0) {
+        userValidationToast("User Login successfully", Colors.green, Colors.white);
+        Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => DashboardScreen()),);
+      }
+      else {
+        userValidationToast("User Login Failed , Please check your UserName & Password", Colors.red, Colors.white);
+        print('Login Failed: $login');
+      }
     }
   }
 
   addBoolToSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLogin', true);
+  }
+
+  //Below method is used to show Login Validation Toast Message in App:-
+  userValidationToast(String validMsg , Color validBackGroundColor , Color validTextColor){
+    Fluttertoast.showToast(
+        msg: validMsg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: validBackGroundColor,
+        textColor: validTextColor,
+        fontSize: 16.0
+    );
   }
 }
