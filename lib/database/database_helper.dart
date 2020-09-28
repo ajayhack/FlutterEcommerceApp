@@ -11,6 +11,7 @@ class DatabaseHelper {
   static final signUpTable = 'signUpTable';
   static final signUpId = '_id';
   static final fullName = 'fullName';
+  static final userName = 'userName';
   static final password = 'password';
   static final dateTime = 'dateTime';
 
@@ -41,6 +42,7 @@ class DatabaseHelper {
           CREATE TABLE $signUpTable (
             $signUpId INTEGER PRIMARY KEY,
             $fullName TEXT NOT NULL,
+            $userName TEXT NOT NULL,
             $password TEXT NOT NULL,
             $dateTime TEXT NOT NULL 
           )
@@ -66,11 +68,11 @@ class DatabaseHelper {
 
   // All of the methods (insert, query, update, delete) can also be done using
   // raw SQL commands. This method uses a raw query to give the row count.
-  Future<int> checkLogin(userName, userPassword) async {
+  Future<int> checkLogin(userID, userPassword) async {
     Database db = await instance.database;
     return Sqflite.firstIntValue(await db.rawQuery(
-        'SELECT COUNT(*) FROM $signUpTable WHERE $fullName=? and $password=?',
-        [userName, userPassword]));
+        'SELECT COUNT(*) FROM $signUpTable WHERE $userName=? and $password=?',
+        [userID, userPassword]));
   }
 
   // We are assuming here that the id column in the map is set. The other

@@ -14,6 +14,8 @@ class Login extends StatefulWidget {
 class LogIn extends State<Login> {
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
+  String fullName="";
+  String userName="";
 
   // reference to our single class that manages the database
   final dbHelper = DatabaseHelper.instance;
@@ -123,11 +125,11 @@ class LogIn extends State<Login> {
       var login = await dbHelper.checkLogin(
           userNameController.text, passwordController.text);
       print('Login Success: $login');
+      getUserData();
       addBoolToSF();
       if (login > 0) {
         userValidationToast("User Login successfully", Colors.green, Colors.white);
-        Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => DashboardScreen()),);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardScreen()),);
       }
       else {
         userValidationToast("User Login Failed , Please check your UserName & Password", Colors.red, Colors.white);
@@ -136,9 +138,19 @@ class LogIn extends State<Login> {
     }
   }
 
+  //Below method is used to save Login Status value in SharedPreference:-
   addBoolToSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLogin', true);
+    prefs.setString('fullName', fullName);
+    prefs.setString('userName', userName);
+  }
+
+  //Below method is used to getUserData from DB SignUp Table:-
+  getUserData() async{
+    var userData = await dbHelper.queryAllRows();
+    fullName = userData[0]["fullName"];
+    userName = userData[0]["userName"];
   }
 
   //Below method is used to show Login Validation Toast Message in App:-

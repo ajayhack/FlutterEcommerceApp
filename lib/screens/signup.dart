@@ -14,6 +14,7 @@ class SignUp extends StatefulWidget {
 
 class SignIn extends State<SignUp> {
   final fullNameController = TextEditingController();
+  final userNameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
@@ -71,6 +72,21 @@ class SignIn extends State<SignUp> {
                             fillColor: Colors.white,
                             filled: true,
                             labelText: 'Full Name',
+                            labelStyle: TextStyle(color: Colors.black)),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        maxLength: 50,
+                        controller: userNameController,
+                        maxLines: 1,
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            fillColor: Colors.white,
+                            filled: true,
+                            labelText: 'User Name',
                             labelStyle: TextStyle(color: Colors.black)),
                       ),
                     ),
@@ -157,6 +173,7 @@ class SignIn extends State<SignUp> {
           dateTime.minute +
           dateTime.second,
       DatabaseHelper.fullName: fullNameController.text,
+      DatabaseHelper.userName: userNameController.text,
       DatabaseHelper.password: passwordController.text,
       DatabaseHelper.dateTime: dateTime.toString()
     };

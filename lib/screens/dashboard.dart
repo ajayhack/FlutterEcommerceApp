@@ -1,9 +1,12 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() {
     return DashboardScreenState();
@@ -12,16 +15,43 @@ class DashboardScreen extends StatefulWidget {
 
 class DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
+  String fullName = "";
+  String userName = "";
 
-  @override
-  void initState() {
-    welcomeMsgShow("Welcome Back to the Indian Ecommerce Shop" , Colors.green , Colors.white);
-    super.initState();
+  DashboardScreenState(){
+    getUserData();
   }
 
   @override
+  void initState(){
+    welcomeMsgShow("Welcome Back to the Indian Ecommerce Shop" , Colors.green , Colors.white);
+    print(fullName);
+    print(userName);
+    super.initState();
+  }
+
+  getUserData() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    fullName = prefs.getBool('fullName') ?? "";
+    userName = prefs.getBool('userName') ?? "";
+  }
+  @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+
+      // statusBarColor is used to set Status bar color in Android devices.
+        statusBarColor: Color(0xFFFF6F00),
+
+        // To make Status bar icons color white in Android devices.
+        statusBarIconBrightness: Brightness.light,
+
+        // statusBarBrightness is used to set Status bar icon color in iOS.
+        statusBarBrightness: Brightness.light
+      // Here light means dark color Status bar icons.
+
+    ));
     return Scaffold(
+      primary: true,
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: Text('Indian E-commerce Shop'),
@@ -32,8 +62,8 @@ class DashboardScreenState extends State<DashboardScreen> {
           children: <Widget>[
             DrawerHeader(
               child: UserAccountsDrawerHeader(
-                accountName: Text("Ajay Thakur"),
-                accountEmail: Text("ajay49811@gmail.com"),
+                accountName: Text(fullName),
+                accountEmail: Text(userName),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor:
                       Theme.of(context).platform == TargetPlatform.iOS
