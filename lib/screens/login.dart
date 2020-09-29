@@ -125,7 +125,6 @@ class LogIn extends State<Login> {
       var login = await dbHelper.checkLogin(
           userNameController.text, passwordController.text);
       print('Login Success: $login');
-      getUserData();
       addBoolToSF();
       if (login > 0) {
         userValidationToast("User Login successfully", Colors.green, Colors.white);
@@ -140,17 +139,15 @@ class LogIn extends State<Login> {
 
   //Below method is used to save Login Status value in SharedPreference:-
   addBoolToSF() async {
+    var userData = await dbHelper.queryAllRows();
+    fullName = userData[0]["fullName"];
+    userName = userData[0]["userName"];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLogin', true);
     prefs.setString('fullName', fullName);
     prefs.setString('userName', userName);
-  }
-
-  //Below method is used to getUserData from DB SignUp Table:-
-  getUserData() async{
-    var userData = await dbHelper.queryAllRows();
-    fullName = userData[0]["fullName"];
-    userName = userData[0]["userName"];
+    print(prefs.getString('fullName'));
+    print(prefs.getString('userName'));
   }
 
   //Below method is used to show Login Validation Toast Message in App:-

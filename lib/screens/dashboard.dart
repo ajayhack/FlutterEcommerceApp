@@ -1,8 +1,10 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/services.dart';
+import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:indian_ecommerce_app/screens/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -17,40 +19,33 @@ class DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
   String fullName = "";
   String userName = "";
-
-  DashboardScreenState(){
-    getUserData();
-  }
+  // reference to our single class that manages the database
+  final dbHelper = DatabaseHelper.instance;
 
   @override
   void initState(){
-    welcomeMsgShow("Welcome Back to the Indian Ecommerce Shop" , Colors.green , Colors.white);
+    super.initState();
+    getUserData();
+    showToast("Welcome Back to the Indian Ecommerce Shop" , Colors.green , Colors.white);
+  }
+
+  Future<void> getUserData() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    fullName = prefs.getString('fullName') ?? "";
+    userName = prefs.getString('userName') ?? "";
     print(fullName);
     print(userName);
-    super.initState();
+    setState(() {
+      fullName = fullName;
+      userName = userName;
+    });
   }
 
-  getUserData() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    fullName = prefs.getBool('fullName') ?? "";
-    userName = prefs.getBool('userName') ?? "";
-  }
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-
-      // statusBarColor is used to set Status bar color in Android devices.
-        statusBarColor: Color(0xFFFF6F00),
-
-        // To make Status bar icons color white in Android devices.
-        statusBarIconBrightness: Brightness.light,
-
-        // statusBarBrightness is used to set Status bar icon color in iOS.
-        statusBarBrightness: Brightness.light
-      // Here light means dark color Status bar icons.
-
-    ));
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
       primary: true,
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -75,6 +70,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
               ),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero,
             ),
             ListTile(
               title: Text("My Order"),
@@ -87,6 +84,11 @@ class DashboardScreenState extends State<DashboardScreen> {
             ListTile(
               title: Text("Help"),
               leading: Icon(Icons.help),
+            ),
+            ListTile(
+              title: Text("Logout"),
+              onTap: logout,
+              leading: Icon(Icons.logout),
             ),
           ],
         ),
@@ -110,6 +112,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         selectedItemColor: Colors.amber[800],
         onTap: onBottomNavigationTapped,
       ),
+    ),
     );
   }
 
@@ -129,42 +132,20 @@ class DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  //Below method is used to logout user from app and also clear all shared preference and db data of it:-
+  logout() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    dbHelper.deleteDB();
+    showToast("Logout Successfully" , Colors.green , Colors.white);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()),);
+  }
+
   //Below method is used to handle navigate screen:-
   navigateScreen(Widget screen) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => screen),
-    );
-  }
-
-  void _showAlertDialog(String title, String message) {
-    // set up the button
-    Widget okButton = FlatButton(
-      child: Text("OK"),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: false).pop();
-      },
-    );
-
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        okButton,
-      ],
-    );
-
-    //ShowDialog method to Show Dialog on Screen with Ok Button in it:-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return WillPopScope(
-            // ignore: missing_return
-            onWillPop: () {},
-            child: alertDialog);
-      },
     );
   }
 
@@ -477,7 +458,7 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   //Below method is used to show Login Validation Toast Message in App:-
-  welcomeMsgShow(String validMsg , Color validBackGroundColor , Color validTextColor){
+  showToast(String validMsg , Color validBackGroundColor , Color validTextColor){
     Fluttertoast.showToast(
         msg: validMsg,
         toastLength: Toast.LENGTH_SHORT,
@@ -487,5 +468,28 @@ class DashboardScreenState extends State<DashboardScreen> {
         textColor: validTextColor,
         fontSize: 16.0
     );
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Are you sure?'),
+        content: Text('Do you want to exit an App'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('No'),
+          ),
+          FlatButton(
+            onPressed: () => SystemNavigator.pop(),
+            /*Navigator.of(context).pop(true)*/
+            child: Text('Yes'),
+          ),
+        ],
+      ),
+    ) ??
+        false;
   }
 }

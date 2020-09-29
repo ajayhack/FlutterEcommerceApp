@@ -91,4 +91,10 @@ class DatabaseHelper {
     return await db
         .delete(signUpTable, where: '$signUpId = ?', whereArgs: [id]);
   }
+
+  //Below method is used to delete DB from App:-
+  deleteDB() async {
+   Database db = await instance.database;
+   return await db.delete(signUpTable);
+ }
 }
