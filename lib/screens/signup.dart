@@ -1,9 +1,8 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/login.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -177,10 +176,14 @@ class SignIn extends State<SignUp> {
       DatabaseHelper.password: passwordController.text,
       DatabaseHelper.dateTime: dateTime.toString()
     };
-    final id = await dbHelper.insert(row);
-    userValidationToast("User Sign Up successfully" , Colors.green , Colors.white);
+    final id = await dbHelper.insertSignUpData(row);
+    userValidationToast(
+        "User Sign Up successfully", Colors.green, Colors.white);
     print('inserted row id: $id');
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()),);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+    );
   }
 
   //Below method is used to show SignUp Validation Toast Message in App:-

@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final _databaseName = "IndianEcommerce.db";
   static final _databaseVersion = 1;
 
+  //SignUp DB Table Fields:-
   static final signUpTable = 'signUpTable';
   static final signUpId = '_id';
   static final fullName = 'fullName';
@@ -15,12 +16,23 @@ class DatabaseHelper {
   static final password = 'password';
   static final dateTime = 'dateTime';
 
+  //Add To Cart DB Table Fields:-
+  static final addToCartTable = 'addToCartTable';
+  static final productSerialNumber = "productSerialNumber";
+  static final productTitle = "productTitle";
+  static final productMrp = "productMrp";
+  static final productDiscount = "productDiscount";
+  static final productPrice = "productPrice";
+  static final isFavourite = "isFavourite";
+
   // make this a singleton class
   DatabaseHelper._privateConstructor();
+
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   // only have a single app-wide reference to the database
   static Database _database;
+
   Future<Database> get database async {
     if (_database != null) return _database;
     // lazily instantiate the db the first time it is accessed
@@ -38,6 +50,7 @@ class DatabaseHelper {
 
   // SQL code to create the database table
   Future _onCreate(Database db, int version) async {
+    //Here we are Creating SignUp Table:-
     await db.execute('''
           CREATE TABLE $signUpTable (
             $signUpId INTEGER PRIMARY KEY,
@@ -47,6 +60,18 @@ class DatabaseHelper {
             $dateTime TEXT NOT NULL 
           )
           ''');
+
+    //Here we are Creating Add To Cart Table:-
+    await db.execute('''
+          CREATE TABLE $addToCartTable (
+            $productSerialNumber INTEGER PRIMARY KEY,
+            $productTitle TEXT NOT NULL,
+            $productMrp TEXT NOT NULL,
+            $productDiscount TEXT NOT NULL,
+            $productPrice TEXT NOT NULL,
+            $isFavourite INTEGER NOT NULL
+          )
+          ''');
   }
 
   // Helper methods
@@ -54,9 +79,15 @@ class DatabaseHelper {
   // Inserts a row in the database where each key in the Map is a column name
   // and the value is the column value. The return value is the id of the
   // inserted row.
-  Future<int> insert(Map<String, dynamic> row) async {
+  Future<int> insertSignUpData(Map<String, dynamic> row) async {
     Database db = await instance.database;
     return await db.insert(signUpTable, row);
+  }
+
+  //Insert Add To Cart Data in Table:-
+  Future<int> insertAddToCartData(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(addToCartTable, row);
   }
 
   // All of the rows are returned as a list of maps, where each map is

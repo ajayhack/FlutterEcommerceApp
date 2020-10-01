@@ -1,7 +1,8 @@
 import 'dart:developer';
 
-import 'package:indian_ecommerce_app/screens/productList.dart';
 import 'package:flutter/material.dart';
+import 'package:indian_ecommerce_app/screens/productList.dart';
+import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class ProductCategoryScreen extends StatefulWidget {
   final String isExpanded;
@@ -23,6 +24,7 @@ class ProductCategoryExpandedList extends State<ProductCategoryScreen> {
   bool isMedicine = false;
   bool isMenClothing = false;
   bool isWomenClothing = false;
+  final scrollController = ScrollController();
 
   ProductCategoryExpandedList(String isExpanded) {
     log('data: $isExpanded');
@@ -74,7 +76,8 @@ class ProductCategoryExpandedList extends State<ProductCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: ScrollAppBar(
+        controller: scrollController,
         backgroundColor: Colors.green,
         title: Text('Products Categories'),
       ),
@@ -84,6 +87,7 @@ class ProductCategoryExpandedList extends State<ProductCategoryScreen> {
 
   getProductExpandedList() {
     return SingleChildScrollView(
+      controller: scrollController,
       child: Column(
         children: <Widget>[
           Padding(

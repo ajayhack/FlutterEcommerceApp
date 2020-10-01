@@ -1,11 +1,13 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/screens/signup.dart';
+import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DashboardScreen extends StatefulWidget {
 
@@ -19,17 +21,20 @@ class DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
   String fullName = "";
   String userName = "";
+
   // reference to our single class that manages the database
   final dbHelper = DatabaseHelper.instance;
+  final scrollController = ScrollController();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     getUserData();
-    showToast("Welcome Back to the Indian Ecommerce Shop" , Colors.green , Colors.white);
+    showToast("Welcome Back to the Indian Ecommerce Shop", Colors.green,
+        Colors.white);
   }
 
-  Future<void> getUserData() async{
+  Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     fullName = prefs.getString('fullName') ?? "";
     userName = prefs.getString('userName') ?? "";
@@ -46,19 +51,20 @@ class DashboardScreenState extends State<DashboardScreen> {
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
-      primary: true,
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text('Indian E-commerce Shop'),
-      ),
-      body: getBannerCarousels(context),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-              child: UserAccountsDrawerHeader(
-                accountName: Text(fullName),
-                accountEmail: Text(userName),
+          primary: true,
+        appBar: ScrollAppBar(
+          controller: scrollController,
+          backgroundColor: Colors.green,
+          title: Text('Indian E-commerce Shop'),
+        ),
+        body: getBannerCarousels(context),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              DrawerHeader(
+                child: UserAccountsDrawerHeader(
+                  accountName: Text(fullName),
+                  accountEmail: Text(userName),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor:
                       Theme.of(context).platform == TargetPlatform.iOS
@@ -83,6 +89,7 @@ class DashboardScreenState extends State<DashboardScreen> {
             ),
             ListTile(
               title: Text("Help"),
+              onTap: () => launch("tel:9560607953"),
               leading: Icon(Icons.help),
             ),
             ListTile(
@@ -153,6 +160,7 @@ class DashboardScreenState extends State<DashboardScreen> {
   getBannerCarousels(BuildContext context) {
     TextStyle titleStyle = Theme.of(context).textTheme.subtitle1;
     return SingleChildScrollView(
+      controller: scrollController,
       child: Column(
         children: <Widget>[
           SizedBox(

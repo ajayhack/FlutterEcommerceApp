@@ -1,7 +1,10 @@
 import 'dart:developer';
 
-import 'package:indian_ecommerce_app/models/productListModal.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:indian_ecommerce_app/database/database_helper.dart';
+import 'package:indian_ecommerce_app/models/productListModal.dart';
+import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class ProductList extends StatefulWidget {
   final String subCategory;
@@ -16,7 +19,11 @@ class ProductList extends StatefulWidget {
 
 class Products extends State<ProductList> {
   String subCategoryName;
+  final scrollController = ScrollController();
   List<ProductListModal> productDataList = List<ProductListModal>();
+
+  // reference to our single class that manages the database
+  final dbHelper = DatabaseHelper.instance;
 
   Products(String subCategory) {
     log('data: $subCategory');
@@ -84,7 +91,8 @@ class Products extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: ScrollAppBar(
+        controller: scrollController,
         backgroundColor: Colors.green,
         title: Text('Products'),
       ),
@@ -94,6 +102,7 @@ class Products extends State<ProductList> {
 
   getProductsGridList(String subCategoryName) {
     return ListView.builder(
+      controller: scrollController,
       itemCount: productDataList.length,
       itemBuilder: (BuildContext context, int index) {
         return new Padding(
@@ -155,9 +164,26 @@ class Products extends State<ProductList> {
                       child: RaisedButton(
                         textColor: Colors.white,
                         color: Colors.orange,
-                        onPressed: () {},
+                        onPressed: () {
+                          addToCart(productDataList[index], 0,
+                              "Product Add To Cart Successfully");
+                        },
                         child: Text(
                           'Add to Cart',
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                              fontSize: 16.0, fontStyle: FontStyle.normal),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                      child: RaisedButton(
+                        textColor: Colors.white,
+                        color: Colors.red,
+                        onPressed: () {},
+                        child: Text(
+                          'Add to Favorites',
                           textDirection: TextDirection.ltr,
                           style: TextStyle(
                               fontSize: 16.0, fontStyle: FontStyle.normal),
@@ -170,7 +196,10 @@ class Products extends State<ProductList> {
                         padding: EdgeInsets.all(8.0),
                         textColor: Colors.white,
                         color: Colors.green,
-                        onPressed: () {},
+                        onPressed: () {
+                          addToCart(productDataList[index], 0,
+                              "Product Add To Favourite Successfully");
+                        },
                         child: Text(
                           'Shop Now',
                           textDirection: TextDirection.ltr,
@@ -187,5 +216,33 @@ class Products extends State<ProductList> {
         );
       },
     );
+  }
+
+  //Below method is used to save Cart Data in DB:-
+  addToCart(ProductListModal modal, int favourite, String successMSG) async {
+    Map<String, dynamic> cart = {
+      DatabaseHelper.productSerialNumber: modal.productNumber,
+      DatabaseHelper.productTitle: modal.productName,
+      DatabaseHelper.productMrp: modal.productMRP,
+      DatabaseHelper.productDiscount: modal.productDiscount,
+      DatabaseHelper.productPrice: modal.productFinalPrice,
+      DatabaseHelper.isFavourite: favourite
+    };
+
+    final id = await dbHelper.insertSignUpData(cart);
+    addCartSuccessToast(successMSG, Colors.green, Colors.white);
+  }
+
+  //Toast Message in App:-
+  addCartSuccessToast(
+      String validMsg, Color validBackGroundColor, Color validTextColor) {
+    Fluttertoast.showToast(
+        msg: validMsg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: validBackGroundColor,
+        textColor: validTextColor,
+        fontSize: 16.0);
   }
 }

@@ -32,7 +32,7 @@ dependencies:
   # The Following Dependency is used to show Images Slider:-
   carousel_pro: ^1.0.0
 
-  #The Follwing Dependecy is used for storing data in DB:-
+  #The Following Dependency is used for storing data in DB:-
   sqflite: ^1.2.0
   path_provider: ^1.5.1
 
@@ -44,6 +44,12 @@ dependencies:
 
   #The Following Dependency is used for showing SplashScreen in App:-
   flutter_native_splash: ^0.1.9
+
+  #The Following Dependency is used for Making Call Action , Launching URLs in browser etc:-
+  url_launcher: ^5.7.2
+
+  #The Following Dependency is used to Scroll App Bar:-
+  scroll_app_bar: ^1.0.2
 
 dev_dependencies:
   flutter_test:
