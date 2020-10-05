@@ -106,6 +106,13 @@ class DatabaseHelper {
         [userID, userPassword]));
   }
 
+  //Below method is to count number of Products added in Shopping Cart:-
+  Future<int> addedProductToCartCount() async {
+    Database db = await instance.database;
+    return Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM $addToCartTable'));
+  }
+
   // We are assuming here that the id column in the map is set. The other
   // column values will be used to update the row.
   Future<int> update(Map<String, dynamic> row) async {

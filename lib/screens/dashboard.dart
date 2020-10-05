@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
+import 'package:indian_ecommerce_app/screens/shoppingCart.dart';
 import 'package:indian_ecommerce_app/screens/signup.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,7 @@ class DashboardScreen extends StatefulWidget {
 
 class DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
+  int cartCount = 0;
   String fullName = "";
   String userName = "";
 
@@ -36,6 +38,8 @@ class DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartCount = await dbHelper.addedProductToCartCount();
+    print('Shopping Cart Products: $cartCount');
     fullName = prefs.getString('fullName') ?? "";
     userName = prefs.getString('userName') ?? "";
     print(fullName);
@@ -126,34 +130,34 @@ class DashboardScreenState extends State<DashboardScreen> {
   onBottomNavigationTapped(int index) {
     String msg = "";
     setState(() {
-      //_selectedIndex = index;
       if (index == 0) {
+        //OnClick of Home.....
       } else if (index == 1) {
         navigateScreen(ProductCategoryScreen(
           isExpanded: null,
         ));
       } else {
-        msg = "Cart Clicked!!";
+        navigateScreen(ShoppingCart());
       }
-      //_showAlertDialog("Alert", msg);
     });
   }
 
   //Below method is used to logout user from app and also clear all shared preference and db data of it:-
   logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-    dbHelper.deleteDB();
-    showToast("Logout Successfully" , Colors.green , Colors.white);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()),);
+    prefs.clear().then((value) =>
+        dbHelper.deleteDB()
+    ).then((value) =>
+        showToast("Logout Successfully", Colors.green, Colors.white)
+    ).then((value) =>
+        navigateScreen(SignUp())
+    );
   }
 
   //Below method is used to handle navigate screen:-
   navigateScreen(Widget screen) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
-    );
+    Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => screen),);
   }
 
   //Below method is used to inflate Banner Carousel Image Slider inside Body:-
@@ -192,7 +196,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                         textColor: Colors.white,
                         color: Colors.black.withOpacity(0.5),
                         onPressed: () {
-                          carouselOnClick(context, 'DE');
+                          carouselOnClick('DE');
                         },
                         child: Text(
                           'Daily Essential Products SHOP NOW',
@@ -232,7 +236,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                         textColor: Colors.white,
                         color: Colors.black.withOpacity(0.5),
                         onPressed: () {
-                          carouselOnClick(context, 'EE');
+                          carouselOnClick('EE');
                         },
                         child: Text(
                           'Electronic Products SHOP NOW',
@@ -276,7 +280,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                         textColor: Colors.white,
                         color: Colors.black.withOpacity(0.5),
                         onPressed: () {
-                          carouselOnClick(context, 'HF');
+                          carouselOnClick('HF');
                         },
                         child: Text(
                           'Health & Fitness Products SHOP NOW',
@@ -314,7 +318,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                       textColor: Colors.white,
                       color: Colors.black.withOpacity(0.5),
                       onPressed: () {
-                        carouselOnClick(context, 'LS');
+                        carouselOnClick('LS');
                       },
                       child: Text(
                         'LifeStyle Products SHOP NOW',
@@ -351,7 +355,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                       textColor: Colors.white,
                       color: Colors.black.withOpacity(0.5),
                       onPressed: () {
-                        carouselOnClick(context, 'ME');
+                        carouselOnClick('ME');
                       },
                       child: Text(
                         'Medicine Products SHOP NOW',
@@ -392,7 +396,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                         textColor: Colors.white,
                         color: Colors.black.withOpacity(0.5),
                         onPressed: () {
-                          carouselOnClick(context, 'MC');
+                          carouselOnClick('MC');
                         },
                         child: Text(
                           'Men Clothing SHOP NOW',
@@ -432,7 +436,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                       textColor: Colors.white,
                       color: Colors.black.withOpacity(0.5),
                       onPressed: () {
-                        carouselOnClick(context, 'WC');
+                        carouselOnClick('WC');
                       },
                       child: Text(
                         'Women Clothing SHOP NOW',
@@ -451,13 +455,8 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  carouselOnClick(BuildContext context, String categoryName) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              ProductCategoryScreen(isExpanded: categoryName)),
-    );
+  carouselOnClick(String categoryName) {
+    navigateScreen(ProductCategoryScreen(isExpanded: categoryName));
   }
 
   void _showSnackBar(BuildContext context, String message) {
@@ -466,7 +465,7 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   //Below method is used to show Login Validation Toast Message in App:-
-  showToast(String validMsg , Color validBackGroundColor , Color validTextColor){
+  showToast(String validMsg, Color validBackGroundColor, Color validTextColor) {
     Fluttertoast.showToast(
         msg: validMsg,
         toastLength: Toast.LENGTH_SHORT,
@@ -478,6 +477,7 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  //Below method is used to show back press exit Dialog on Dashboard:-
   Future<bool> _onWillPop() {
     return showDialog(
       context: context,

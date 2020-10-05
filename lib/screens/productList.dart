@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/models/productListModal.dart';
+import 'package:indian_ecommerce_app/screens/dashboard.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class ProductList extends StatefulWidget {
@@ -229,8 +230,22 @@ class Products extends State<ProductList> {
       DatabaseHelper.isFavourite: favourite
     };
 
-    final id = await dbHelper.insertSignUpData(cart);
-    addCartSuccessToast(successMSG, Colors.green, Colors.white);
+    final addedToCart = await dbHelper.insertSignUpData(cart);
+    if (addedToCart > 0) {
+      addCartSuccessToast(successMSG, Colors.green, Colors.white);
+      navigateScreen(DashboardScreen());
+    } else {
+      addCartSuccessToast(
+          "Failed to Add Product to Cart", Colors.red, Colors.white);
+    }
+  }
+
+  //Below method is used to handle navigate screen:-
+  navigateScreen(Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
+    );
   }
 
   //Toast Message in App:-
