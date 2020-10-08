@@ -51,6 +51,9 @@ dependencies:
   #The Following Dependency is used to Scroll App Bar:-
   scroll_app_bar: ^1.0.2
 
+  #The Following Dependency is used to add Badges to Items in App:-
+  badges: ^1.1.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

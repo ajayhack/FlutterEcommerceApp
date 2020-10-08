@@ -115,9 +115,9 @@ class DashboardScreenState extends State<DashboardScreen> {
             label: 'Products',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
+              icon: Icon(Icons.shopping_cart),
+              label: 'Cart',
+            ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],

@@ -64,11 +64,11 @@ class DatabaseHelper {
     //Here we are Creating Add To Cart Table:-
     await db.execute('''
           CREATE TABLE $addToCartTable (
-            $productSerialNumber INTEGER PRIMARY KEY,
+            $productSerialNumber TEXT PRIMARY KEY,
             $productTitle TEXT NOT NULL,
-            $productMrp TEXT NOT NULL,
-            $productDiscount TEXT NOT NULL,
-            $productPrice TEXT NOT NULL,
+            $productMrp INTEGER NOT NULL,
+            $productDiscount INTEGER NOT NULL,
+            $productPrice INTEGER NOT NULL,
             $isFavourite INTEGER NOT NULL
           )
           ''');

@@ -182,7 +182,10 @@ class Products extends State<ProductList> {
                       child: RaisedButton(
                         textColor: Colors.white,
                         color: Colors.red,
-                        onPressed: () {},
+                        onPressed: () {
+                          addToCart(productDataList[index], 0,
+                              "Product Add To Favourites Successfully");
+                        },
                         child: Text(
                           'Add to Favorites',
                           textDirection: TextDirection.ltr,
@@ -199,7 +202,7 @@ class Products extends State<ProductList> {
                         color: Colors.green,
                         onPressed: () {
                           addToCart(productDataList[index], 0,
-                              "Product Add To Favourite Successfully");
+                              "Product Add To Shop Now Successfully");
                         },
                         child: Text(
                           'Shop Now',
@@ -230,11 +233,13 @@ class Products extends State<ProductList> {
       DatabaseHelper.isFavourite: favourite
     };
 
-    final addedToCart = await dbHelper.insertSignUpData(cart);
+    final addedToCart = await dbHelper.insertAddToCartData(cart);
     if (addedToCart > 0) {
+      print("Cart Success: $addedToCart");
       addCartSuccessToast(successMSG, Colors.green, Colors.white);
       navigateScreen(DashboardScreen());
     } else {
+      print("Cart Success: $addedToCart");
       addCartSuccessToast(
           "Failed to Add Product to Cart", Colors.red, Colors.white);
     }
