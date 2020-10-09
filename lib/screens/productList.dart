@@ -97,11 +97,12 @@ class Products extends State<ProductList> {
         backgroundColor: Colors.green,
         title: Text('Products'),
       ),
-      body: getProductsGridList(subCategoryName),
+      body: getProductsList(subCategoryName),
     );
   }
 
-  getProductsGridList(String subCategoryName) {
+  //Below method is used to show Products List:-
+  getProductsList(String subCategoryName) {
     return ListView.builder(
       controller: scrollController,
       itemCount: productDataList.length,
@@ -183,7 +184,7 @@ class Products extends State<ProductList> {
                         textColor: Colors.white,
                         color: Colors.red,
                         onPressed: () {
-                          addToCart(productDataList[index], 0,
+                          addToCart(productDataList[index], 1,
                               "Product Add To Favourites Successfully");
                         },
                         child: Text(
@@ -201,7 +202,7 @@ class Products extends State<ProductList> {
                         textColor: Colors.white,
                         color: Colors.green,
                         onPressed: () {
-                          addToCart(productDataList[index], 0,
+                          addToCart(productDataList[index], 2,
                               "Product Add To Shop Now Successfully");
                         },
                         child: Text(

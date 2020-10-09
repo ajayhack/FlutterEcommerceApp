@@ -90,11 +90,16 @@ class DatabaseHelper {
     return await db.insert(addToCartTable, row);
   }
 
-  // All of the rows are returned as a list of maps, where each map is
-  // a key-value list of columns.
-  Future<List<Map<String, dynamic>>> queryAllRows() async {
+  //Below method is used to query All SignUp Table Data:-
+  Future<List<Map<String, dynamic>>> queryAllSignUpRows() async {
     Database db = await instance.database;
     return await db.query(signUpTable);
+  }
+
+  //Below method is used to query All Shopping Cart Table Data:-
+  Future<List<Map<String, dynamic>>> queryAllShoppingCartRows() async {
+    Database db = await instance.database;
+    return await db.query(addToCartTable);
   }
 
   // All of the methods (insert, query, update, delete) can also be done using
@@ -130,9 +135,9 @@ class DatabaseHelper {
         .delete(signUpTable, where: '$signUpId = ?', whereArgs: [id]);
   }
 
-  //Below method is used to delete DB from App:-
-  deleteDB() async {
-   Database db = await instance.database;
-   return await db.delete(signUpTable);
- }
+  //Below method is used to delete SignUpDB from App:-
+  deleteSignUpDB() async {
+    Database db = await instance.database;
+    return await db.delete(signUpTable);
+  }
 }

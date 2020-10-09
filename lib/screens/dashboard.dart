@@ -133,11 +133,9 @@ class DashboardScreenState extends State<DashboardScreen> {
       if (index == 0) {
         //OnClick of Home.....
       } else if (index == 1) {
-        navigateScreen(ProductCategoryScreen(
-          isExpanded: null,
-        ));
+        navigateScreen(ProductCategoryScreen(isExpanded: null), true);
       } else {
-        navigateScreen(ShoppingCart());
+        navigateScreen(ShoppingCart(), true);
       }
     });
   }
@@ -145,19 +143,27 @@ class DashboardScreenState extends State<DashboardScreen> {
   //Below method is used to logout user from app and also clear all shared preference and db data of it:-
   logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear().then((value) =>
-        dbHelper.deleteDB()
-    ).then((value) =>
-        showToast("Logout Successfully", Colors.green, Colors.white)
-    ).then((value) =>
-        navigateScreen(SignUp())
-    );
+    prefs
+        .clear()
+        .then((value) => dbHelper.deleteSignUpDB())
+        .then((value) =>
+            showToast("Logout Successfully", Colors.green, Colors.white))
+        .then((value) => navigateScreen(SignUp(), false));
   }
 
   //Below method is used to handle navigate screen:-
-  navigateScreen(Widget screen) {
-    Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => screen),);
+  navigateScreen(Widget screen, bool isBackStack) {
+    if (isBackStack) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => screen),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => screen),
+      );
+    }
   }
 
   //Below method is used to inflate Banner Carousel Image Slider inside Body:-
@@ -456,7 +462,7 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   carouselOnClick(String categoryName) {
-    navigateScreen(ProductCategoryScreen(isExpanded: categoryName));
+    navigateScreen(ProductCategoryScreen(isExpanded: categoryName), true);
   }
 
   void _showSnackBar(BuildContext context, String message) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:indian_ecommerce_app/database/database_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:indian_ecommerce_app/screens/dashboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:indian_ecommerce_app/database/database_helper.dart';
+import 'package:indian_ecommerce_app/screens/dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -139,7 +139,7 @@ class LogIn extends State<Login> {
 
   //Below method is used to save Login Status value in SharedPreference:-
   addBoolToSF() async {
-    var userData = await dbHelper.queryAllRows();
+    var userData = await dbHelper.queryAllSignUpRows();
     fullName = userData[0]["fullName"];
     userName = userData[0]["userName"];
     SharedPreferences prefs = await SharedPreferences.getInstance();
