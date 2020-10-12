@@ -18,6 +18,7 @@ class DatabaseHelper {
 
   //Add To Cart DB Table Fields:-
   static final addToCartTable = 'addToCartTable';
+  static final productId = 'productId';
   static final productSerialNumber = "productSerialNumber";
   static final productTitle = "productTitle";
   static final productMrp = "productMrp";
@@ -64,7 +65,8 @@ class DatabaseHelper {
     //Here we are Creating Add To Cart Table:-
     await db.execute('''
           CREATE TABLE $addToCartTable (
-            $productSerialNumber TEXT PRIMARY KEY,
+            $productId TEXT PRIMARY KEY,
+            $productSerialNumber TEXT NOT NULL,
             $productTitle TEXT NOT NULL,
             $productMrp INTEGER NOT NULL,
             $productDiscount INTEGER NOT NULL,
@@ -99,7 +101,31 @@ class DatabaseHelper {
   //Below method is used to query All Shopping Cart Table Data:-
   Future<List<Map<String, dynamic>>> queryAllShoppingCartRows() async {
     Database db = await instance.database;
-    return await db.query(addToCartTable);
+    return await db
+        .rawQuery('SELECT * FROM $addToCartTable WHERE isFavourite= 0');
+  }
+
+  //Below method is used to query All Favourite Products from Table Data:-
+  Future<List<Map<String, dynamic>>> queryAllFavouritesRows() async {
+    Database db = await instance.database;
+    return await db
+        .rawQuery('SELECT * FROM $addToCartTable WHERE isFavourite= 1');
+  }
+
+  //Below method is used to update Cart Product to Favourite Product at Shopping Cart Page:-
+  Future<int> updateToFav(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    String id = row[productSerialNumber];
+    return await db.update(addToCartTable, row,
+        where: '$productSerialNumber = ?', whereArgs: [id]);
+  }
+
+  //Below method is used to update Cart Product to Favourite Product at Shopping Cart Page:-
+  Future<int> updateToCart(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    String id = row[productSerialNumber];
+    return await db.update(addToCartTable, row,
+        where: '$productSerialNumber = ?', whereArgs: [id]);
   }
 
   // All of the methods (insert, query, update, delete) can also be done using
@@ -123,16 +149,16 @@ class DatabaseHelper {
   Future<int> update(Map<String, dynamic> row) async {
     Database db = await instance.database;
     int id = row[signUpId];
-    return await db
-        .update(signUpTable, row, where: '$signUpId = ?', whereArgs: [id]);
+    return await db.update(
+        signUpTable, row, where: '$signUpId = ?', whereArgs: [id]);
   }
 
   // Deletes the row specified by the id. The number of affected rows is
   // returned. This should be 1 as long as the row exists.
-  Future<int> delete(int id) async {
+  Future<int> deleteCartItem(String id) async {
     Database db = await instance.database;
-    return await db
-        .delete(signUpTable, where: '$signUpId = ?', whereArgs: [id]);
+    return await db.delete(
+        addToCartTable, where: '$productId = ?', whereArgs: [id]);
   }
 
   //Below method is used to delete SignUpDB from App:-

@@ -206,7 +206,7 @@ class Products extends State<ProductList> {
                               "Product Add To Shop Now Successfully");
                         },
                         child: Text(
-                          'Shop Now',
+                          'Order Now',
                           textDirection: TextDirection.ltr,
                           style: TextStyle(
                               fontSize: 14.0, fontStyle: FontStyle.normal),
@@ -225,7 +225,14 @@ class Products extends State<ProductList> {
 
   //Below method is used to save Cart Data in DB:-
   addToCart(ProductListModal modal, int favourite, String successMSG) async {
+    var dateTime = DateTime.now();
     Map<String, dynamic> cart = {
+      DatabaseHelper.productId: dateTime.year +
+          dateTime.month +
+          dateTime.day +
+          dateTime.hour +
+          dateTime.minute +
+          dateTime.second,
       DatabaseHelper.productSerialNumber: modal.productNumber,
       DatabaseHelper.productTitle: modal.productName,
       DatabaseHelper.productMrp: modal.productMRP,
@@ -238,7 +245,9 @@ class Products extends State<ProductList> {
     if (addedToCart > 0) {
       print("Cart Success: $addedToCart");
       addCartSuccessToast(successMSG, Colors.green, Colors.white);
-      navigateScreen(DashboardScreen());
+      Future.delayed(Duration(seconds: 1), () {
+        navigateScreen(DashboardScreen());
+      });
     } else {
       print("Cart Success: $addedToCart");
       addCartSuccessToast(

@@ -10,8 +10,9 @@ import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DashboardScreen extends StatefulWidget {
+import 'Favourites.dart';
 
+class DashboardScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return DashboardScreenState();
@@ -32,8 +33,6 @@ class DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     getUserData();
-    showToast("Welcome Back to the Indian Ecommerce Shop", Colors.green,
-        Colors.white);
   }
 
   Future<void> getUserData() async {
@@ -89,6 +88,7 @@ class DashboardScreenState extends State<DashboardScreen> {
             ),
             ListTile(
               title: Text("My Favourites"),
+              onTap: () => showFavourites(),
               leading: Icon(Icons.favorite),
             ),
             ListTile(
@@ -98,7 +98,7 @@ class DashboardScreenState extends State<DashboardScreen> {
             ),
             ListTile(
               title: Text("Logout"),
-              onTap: logout,
+              onTap: () => logout(),
               leading: Icon(Icons.logout),
             ),
           ],
@@ -127,27 +127,38 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  //Below method is to handle bottom navigation onClick:-
   onBottomNavigationTapped(int index) {
-    String msg = "";
     setState(() {
       if (index == 0) {
         //OnClick of Home.....
       } else if (index == 1) {
         navigateScreen(ProductCategoryScreen(isExpanded: null), true);
       } else {
-        navigateScreen(ShoppingCart(), true);
+        dbHelper.queryAllShoppingCartRows().then((value) =>
+            navigateScreen(ShoppingCart(cartData: value), true)
+        );
       }
     });
   }
 
+  //Below method is sued to navigate user to show there favourite products:-
+  showFavourites() {
+    Navigator.pop(context);
+    dbHelper.queryAllFavouritesRows().then((value) =>
+        navigateScreen(Favourites(favData: value), true)
+    );
+  }
+
   //Below method is used to logout user from app and also clear all shared preference and db data of it:-
-  logout() async{
+  logout() async {
+    Navigator.pop(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs
         .clear()
         .then((value) => dbHelper.deleteSignUpDB())
         .then((value) =>
-            showToast("Logout Successfully", Colors.green, Colors.white))
+        showToast("Logout Successfully", Colors.green, Colors.white))
         .then((value) => navigateScreen(SignUp(), false));
   }
 
