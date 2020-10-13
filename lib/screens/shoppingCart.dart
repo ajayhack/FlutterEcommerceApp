@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
+import 'package:indian_ecommerce_app/screens/shippingConfirmation.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class ShoppingCart extends StatefulWidget {
@@ -75,6 +76,7 @@ class Cart extends State<ShoppingCart> {
                           '\u20B9' +
                           shoppingCartData[index]["productMrp"].toString(),
                       style: TextStyle(
+                          decoration: TextDecoration.lineThrough,
                           fontSize: 16.0,
                           fontStyle: FontStyle.normal,
                           color: Colors.white),
@@ -146,11 +148,13 @@ class Cart extends State<ShoppingCart> {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             width: double.infinity,
             child: FlatButton(
-              child: Text('Order Now', style: TextStyle(fontSize: 24)),
-              onPressed: () => {},
+              child: Text('Place Order', style: TextStyle(fontSize: 24)),
+              onPressed: () =>
+                  navigateScreen(
+                      ShippingConfirmation(orderData: shoppingCartData,)),
               color: Colors.green,
               textColor: Colors.white,
             ),
@@ -160,10 +164,38 @@ class Cart extends State<ShoppingCart> {
     } else {
       return Center(
           child: FittedBox(
-        child: Image.asset("assets/images/animated_images/cart_empty.gif"),
-        fit: BoxFit.fill,
-      ));
+            child: Image.asset("assets/images/animated_images/cart_empty.gif"),
+            fit: BoxFit.fill,
+          ));
     }
+  }
+
+  //Below method is used to calculate totalProductMrp:-
+  String getTotalProductMrp() {
+    int totalProductMrp = 0;
+    for (int i = 0; i < shoppingCartData.length; i++) {
+      totalProductMrp = totalProductMrp + shoppingCartData[i]["productMrp"];
+    }
+    return totalProductMrp.toString();
+  }
+
+  //Below method is used to calculate totalProductDiscount:-
+  String getTotalProductDiscount() {
+    int totalProductDiscount = 0;
+    for (int i = 0; i < shoppingCartData.length; i++) {
+      totalProductDiscount =
+          totalProductDiscount + shoppingCartData[i]["productDiscount"];
+    }
+    return totalProductDiscount.toString();
+  }
+
+  //Below method is used to calculate grandTotal:-
+  String getGrandTotal() {
+    int grandTotal = 0;
+    for (int i = 0; i < shoppingCartData.length; i++) {
+      grandTotal = grandTotal + shoppingCartData[i]["productPrice"];
+    }
+    return grandTotal.toString();
   }
 
   //Below method is used to save Cart Data in Favourites DB:-

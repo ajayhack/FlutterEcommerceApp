@@ -26,6 +26,15 @@ class DatabaseHelper {
   static final productPrice = "productPrice";
   static final isFavourite = "isFavourite";
 
+  //Add To Cart DB Table Fields:-
+  static final shippingAddressTable = 'shippingAddressTable';
+  static final shippingId = 'shippingId';
+  static final shippingFullName = "shippingFullName";
+  static final shippingMobileNumber = "shippingMobileNumber";
+  static final shippingCity = "shippingCity";
+  static final shippingState = "shippingState";
+  static final shippingPinCode = "shippingPinCode";
+
   // make this a singleton class
   DatabaseHelper._privateConstructor();
 
@@ -74,6 +83,18 @@ class DatabaseHelper {
             $isFavourite INTEGER NOT NULL
           )
           ''');
+
+    //Here we are Creating Shipping Address Table:-
+    await db.execute('''
+          CREATE TABLE $shippingAddressTable (
+            $shippingId TEXT PRIMARY KEY,
+            $shippingFullName TEXT NOT NULL,
+            $shippingMobileNumber TEXT NOT NULL,
+            $shippingCity INTEGER NOT NULL,
+            $shippingState INTEGER NOT NULL,
+            $shippingPinCode INTEGER NOT NULL
+          )
+          ''');
   }
 
   // Helper methods
@@ -90,6 +111,12 @@ class DatabaseHelper {
   Future<int> insertAddToCartData(Map<String, dynamic> row) async {
     Database db = await instance.database;
     return await db.insert(addToCartTable, row);
+  }
+
+  //Insert Add To Cart Data in Table:-
+  Future<int> insertShippingAddressData(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(shippingAddressTable, row);
   }
 
   //Below method is used to query All SignUp Table Data:-
@@ -126,6 +153,14 @@ class DatabaseHelper {
     String id = row[productSerialNumber];
     return await db.update(addToCartTable, row,
         where: '$productSerialNumber = ?', whereArgs: [id]);
+  }
+
+  //Below method is used to update Cart Product to Favourite Product at Shopping Cart Page:-
+  Future<int> updateToOrder(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    String id = row[productId];
+    return await db
+        .update(addToCartTable, row, where: '$productId = ?', whereArgs: [id]);
   }
 
   // All of the methods (insert, query, update, delete) can also be done using

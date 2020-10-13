@@ -10,7 +10,7 @@ import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'Favourites.dart';
+import 'favourites.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override

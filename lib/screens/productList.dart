@@ -135,6 +135,7 @@ class Products extends State<ProductList> {
                       '\u20B9' +
                       productDataList[index].productMRP,
                   style: TextStyle(
+                      decoration: TextDecoration.lineThrough,
                       fontSize: 16.0,
                       fontStyle: FontStyle.normal,
                       color: Colors.white),

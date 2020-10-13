@@ -75,6 +75,7 @@ class FavouritesProduct extends State<Favourites> {
                         '\u20B9' +
                         favouriteDataList[index]["productMrp"].toString(),
                     style: TextStyle(
+                        decoration: TextDecoration.lineThrough,
                         fontSize: 16.0,
                         fontStyle: FontStyle.normal,
                         color: Colors.white),
