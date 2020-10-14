@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:indian_ecommerce_app/screens/dashboard.dart';
+import 'package:indian_ecommerce_app/screens/login.dart';
 import 'package:indian_ecommerce_app/screens/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  var status = prefs.getBool('isLogin') ?? false;
-  print(status);
-  runApp(
-      MaterialApp(
+  var loginStatus = prefs.getInt('isLogin') ?? 2;
+  print(loginStatus);
+  runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: status == true ? DashboardScreen() : SignUp()
-  )
-  );
+      home: loginStatus == 0
+          ? Login()
+          : loginStatus == 1
+              ? DashboardScreen()
+              : SignUp()));
 }
-
 
 class MyApp extends StatelessWidget {
   @override

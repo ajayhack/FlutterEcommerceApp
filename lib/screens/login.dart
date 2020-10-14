@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/dashboard.dart';
+import 'package:indian_ecommerce_app/screens/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -92,17 +93,41 @@ class LogIn extends State<Login> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Colors.green,
-                        onPressed: () {
-                          doLogin();
-                        },
-                        child: Text(
-                          'Login',
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                              fontSize: 16.0, fontStyle: FontStyle.normal),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        child: RaisedButton(
+                          textColor: Colors.white,
+                          color: Colors.green,
+                          onPressed: () {
+                            doLogin();
+                          },
+                          child: Text(
+                            'Login',
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                                fontSize: 16.0, fontStyle: FontStyle.normal),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        child: RaisedButton(
+                          textColor: Colors.white,
+                          color: Colors.blue,
+                          onPressed: () => navigateUser(
+                            SignUp(),
+                          ),
+                          child: Text(
+                            'SignUp',
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                                fontSize: 16.0, fontStyle: FontStyle.normal),
+                          ),
                         ),
                       ),
                     ),
@@ -125,25 +150,34 @@ class LogIn extends State<Login> {
       var login = await dbHelper.checkLogin(
           userNameController.text, passwordController.text);
       print('Login Success: $login');
-      addBoolToSF();
+      addPreferenceValue();
       if (login > 0) {
-        userValidationToast("User Login successfully", Colors.green, Colors.white);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardScreen()),);
+        userValidationToast(
+            "User Login successfully", Colors.green, Colors.white);
+        navigateUser(DashboardScreen(),);
       }
       else {
-        userValidationToast("User Login Failed , Please check your UserName & Password", Colors.red, Colors.white);
+        userValidationToast(
+            "User Login Failed , Please check your UserName & Password",
+            Colors.red, Colors.white);
         print('Login Failed: $login');
       }
     }
   }
 
+  //Below method is used to navigate user to Dashboard or SignUp Screen:-
+  navigateUser(Widget screen) {
+    Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => screen),);
+  }
+
   //Below method is used to save Login Status value in SharedPreference:-
-  addBoolToSF() async {
+  addPreferenceValue() async {
     var userData = await dbHelper.queryAllSignUpRows();
     fullName = userData[0]["fullName"];
     userName = userData[0]["userName"];
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLogin', true);
+    prefs.setInt("isLogin", 1);
     prefs.setString('fullName', fullName);
     prefs.setString('userName', userName);
     print(prefs.getString('fullName'));

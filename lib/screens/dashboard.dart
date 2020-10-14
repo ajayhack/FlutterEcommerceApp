@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
+import 'package:indian_ecommerce_app/screens/orders.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
 import 'package:indian_ecommerce_app/screens/shoppingCart.dart';
-import 'package:indian_ecommerce_app/screens/signup.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'favourites.dart';
+import 'login.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -84,8 +85,9 @@ class DashboardScreenState extends State<DashboardScreen> {
             ),
             ListTile(
               title: Text("My Order"),
-              leading: Icon(Icons.shop),
-            ),
+                onTap: () => showOrders(),
+                leading: Icon(Icons.shop),
+              ),
             ListTile(
               title: Text("My Favourites"),
               onTap: () => showFavourites(),
@@ -98,7 +100,7 @@ class DashboardScreenState extends State<DashboardScreen> {
             ),
             ListTile(
               title: Text("Logout"),
-              onTap: () => logout(),
+              onTap: () => logoutConfirmationDialog(),
               leading: Icon(Icons.logout),
             ),
           ],
@@ -142,7 +144,7 @@ class DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  //Below method is sued to navigate user to show there favourite products:-
+  //Below method is used to navigate user to show there favourite products:-
   showFavourites() {
     Navigator.pop(context);
     dbHelper.queryAllFavouritesRows().then((value) =>
@@ -150,16 +152,53 @@ class DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  //Below method is used to navigate user to show there orders products:-
+  showOrders() {
+    Navigator.pop(context);
+    dbHelper.queryAllOrdersRows().then((value) =>
+        navigateScreen(Orders(orderData: value), true)
+    );
+  }
+
   //Below method is used to logout user from app and also clear all shared preference and db data of it:-
   logout() async {
     Navigator.pop(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs
-        .clear()
-        .then((value) => dbHelper.deleteSignUpDB())
+    prefs.setInt("isLogin", 0)
         .then((value) =>
         showToast("Logout Successfully", Colors.green, Colors.white))
-        .then((value) => navigateScreen(SignUp(), false));
+        .then((value) =>
+        Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (BuildContext context) => Login(),),
+              (route) => false,));
+  }
+
+  //Below method is sued to show Order Confirmation Dialog to user:-
+  logoutConfirmationDialog() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) =>
+          AlertDialog(
+            title: Text('Exit'),
+            content: Text('Do you want to Logout from App?'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
+              ),
+              FlatButton(
+                onPressed: () =>
+                {
+                  Navigator.of(context).pop(false),
+                  logout()
+                },
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+    ) ??
+        false;
   }
 
   //Below method is used to handle navigate screen:-

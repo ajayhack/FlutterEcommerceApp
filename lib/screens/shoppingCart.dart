@@ -225,9 +225,6 @@ class Cart extends State<ShoppingCart> {
               shoppingCartData = value;
             }),
           );
-      /*Future.delayed(Duration(seconds: 1), () {
-        navigateScreen(DashboardScreen());
-      });*/
     } else {
       print("Favourite Added Failed: $updatedToFav");
       successToast(
@@ -251,10 +248,7 @@ class Cart extends State<ShoppingCart> {
 
   //Below method is used to handle navigate screen:-
   navigateScreen(Widget screen) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => screen),);
   }
 
   //Toast Message in App:-

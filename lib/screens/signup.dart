@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -123,17 +123,21 @@ class SignIn extends State<SignUp> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Colors.green,
-                        onPressed: () {
-                          doSignUp();
-                        },
-                        child: Text(
-                          'SignUp',
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                              fontSize: 16.0, fontStyle: FontStyle.normal),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        child: RaisedButton(
+                          textColor: Colors.white,
+                          color: Colors.green,
+                          onPressed: () {
+                            doSignUp();
+                          },
+                          child: Text(
+                            'SignUp',
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                                fontSize: 16.0, fontStyle: FontStyle.normal),
+                          ),
                         ),
                       ),
                     ),
@@ -164,6 +168,7 @@ class SignIn extends State<SignUp> {
   void insert() async {
     // row to insert
     var dateTime = DateTime.now();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> row = {
       DatabaseHelper.signUpId: dateTime.year +
           dateTime.month +
@@ -176,13 +181,17 @@ class SignIn extends State<SignUp> {
       DatabaseHelper.password: passwordController.text,
       DatabaseHelper.dateTime: dateTime.toString()
     };
-    final id = await dbHelper.insertSignUpData(row);
-    userValidationToast(
-        "User Sign Up successfully", Colors.green, Colors.white);
-    print('inserted row id: $id');
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Login()),
+    await dbHelper.insertSignUpData(row).then((value) =>
+    {
+      prefs.setInt("isLogin", 0)
+    }
+    ).then((value) =>
+    {
+      userValidationToast(
+          "User Sign Up successfully", Colors.green, Colors.white),
+      Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Login()),)
+    }
     );
   }
 

@@ -139,6 +139,13 @@ class DatabaseHelper {
         .rawQuery('SELECT * FROM $addToCartTable WHERE isFavourite= 1');
   }
 
+  //Below method is used to query All Orders Products from Table Data:-
+  Future<List<Map<String, dynamic>>> queryAllOrdersRows() async {
+    Database db = await instance.database;
+    return await db
+        .rawQuery('SELECT * FROM $addToCartTable WHERE isFavourite= 2');
+  }
+
   //Below method is used to update Cart Product to Favourite Product at Shopping Cart Page:-
   Future<int> updateToFav(Map<String, dynamic> row) async {
     Database db = await instance.database;
@@ -192,8 +199,8 @@ class DatabaseHelper {
   // returned. This should be 1 as long as the row exists.
   Future<int> deleteCartItem(String id) async {
     Database db = await instance.database;
-    return await db.delete(
-        addToCartTable, where: '$productId = ?', whereArgs: [id]);
+    return await db
+        .delete(addToCartTable, where: '$productId = ?', whereArgs: [id]);
   }
 
   //Below method is used to delete SignUpDB from App:-

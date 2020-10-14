@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
-import 'package:indian_ecommerce_app/screens/login.dart';
+import 'package:indian_ecommerce_app/screens/dashboard.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class ShippingConfirmation extends StatefulWidget {
   final List<Map<String, dynamic>> orderData;
@@ -23,6 +24,8 @@ class Shipping extends State<ShippingConfirmation> {
   final stateController = TextEditingController();
   final pinCodeController = TextEditingController();
   var allOrderData;
+  final scrollController = ScrollController();
+  ProgressDialog progressDialog;
 
   // reference to our single class that manages the database
   final dbHelper = DatabaseHelper.instance;
@@ -35,10 +38,10 @@ class Shipping extends State<ShippingConfirmation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: ScrollAppBar(
+          controller: scrollController,
           backgroundColor: Colors.green,
-          title: Text('Shipping Address'),
-          automaticallyImplyLeading: false),
+          title: Text('Shipping Address')),
       body: getDisplayShippingAddressView(context),
     );
   }
@@ -149,17 +152,21 @@ class Shipping extends State<ShippingConfirmation> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Colors.green,
-                        onPressed: () {
-                          order();
-                        },
-                        child: Text(
-                          'Order Now',
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                              fontSize: 16.0, fontStyle: FontStyle.normal),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        child: RaisedButton(
+                          textColor: Colors.white,
+                          color: Colors.green,
+                          onPressed: () {
+                            order();
+                          },
+                          child: Text(
+                            'Order Now',
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                                fontSize: 16.0, fontStyle: FontStyle.normal),
+                          ),
                         ),
                       ),
                     ),
@@ -195,8 +202,7 @@ class Shipping extends State<ShippingConfirmation> {
   }
 
   void insertOrder() async {
-    SystemNavigator.pop();
-    final ProgressDialog progressDialog = ProgressDialog(
+    progressDialog = ProgressDialog(
         context, type: ProgressDialogType.Normal,
         isDismissible: false,
         showLogs: false);
@@ -236,20 +242,22 @@ class Shipping extends State<ShippingConfirmation> {
       DatabaseHelper.productPrice: allOrderData[index]["productPrice"],
       DatabaseHelper.isFavourite: 2
     };
-    await dbHelper.updateToOrder(cart).then((value) =>
+    await dbHelper.updateToOrder(cart).then((value) async =>
     {
       if(value > 0){
+        await progressDialog.hide(),
         userValidationToast(
             "Order Placed Successfully", Colors.green, Colors.white),
-
         Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()),)
+          context, MaterialPageRoute(builder: (context) => DashboardScreen()),)
       } else
         {
-          await progressDialog.hide()
+          await progressDialog.hide(),
+          userValidationToast(
+              "Order Placed Failed", Colors.green, Colors.white),
         }
     }
-    )
+    );
   }
 
   //Below method is sued to show Order Confirmation Dialog to user:-
@@ -267,7 +275,11 @@ class Shipping extends State<ShippingConfirmation> {
                 child: Text('No'),
               ),
               FlatButton(
-                onPressed: () => insertOrder(),
+                onPressed: () =>
+                {
+                  Navigator.of(context).pop(false),
+                  insertOrder()
+                },
                 child: Text('Yes'),
               ),
             ],
