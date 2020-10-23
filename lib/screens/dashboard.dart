@@ -2,6 +2,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:indian_ecommerce_app/database/database_helper.dart';
 import 'package:indian_ecommerce_app/screens/orders.dart';
 import 'package:indian_ecommerce_app/screens/productCategoryScreen.dart';
@@ -29,6 +30,8 @@ class DashboardScreenState extends State<DashboardScreen> {
   // reference to our single class that manages the database
   final dbHelper = DatabaseHelper.instance;
   final scrollController = ScrollController();
+  File _image;
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -83,26 +86,31 @@ class DashboardScreenState extends State<DashboardScreen> {
               padding: EdgeInsets.zero,
               margin: EdgeInsets.zero,
             ),
-            ListTile(
-              title: Text("My Order"),
+              ListTile(
+                title: Text("My Order"),
                 onTap: () => showOrders(),
                 leading: Icon(Icons.shop),
               ),
-            ListTile(
-              title: Text("My Favourites"),
-              onTap: () => showFavourites(),
-              leading: Icon(Icons.favorite),
-            ),
-            ListTile(
-              title: Text("Help"),
-              onTap: () => launch("tel:9560607953"),
-              leading: Icon(Icons.help),
-            ),
-            ListTile(
-              title: Text("Logout"),
-              onTap: () => logoutConfirmationDialog(),
-              leading: Icon(Icons.logout),
-            ),
+              ListTile(
+                title: Text("My Favourites"),
+                onTap: () => showFavourites(),
+                leading: Icon(Icons.favorite),
+              ),
+              ListTile(
+                title: Text("Add Product"),
+                onTap: () => openCamera(),
+                leading: Icon(Icons.camera_alt),
+              ),
+              ListTile(
+                title: Text("Help"),
+                onTap: () => launch("tel:9560607953"),
+                leading: Icon(Icons.help),
+              ),
+              ListTile(
+                title: Text("Logout"),
+                onTap: () => logoutConfirmationDialog(),
+                leading: Icon(Icons.logout),
+              ),
           ],
         ),
       ),
@@ -119,14 +127,27 @@ class DashboardScreenState extends State<DashboardScreen> {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart),
               label: 'Cart',
-            ),
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         onTap: onBottomNavigationTapped,
       ),
-    ),
+        ),
     );
+  }
+
+  //Below method is used to open image picker:-
+  Future openCamera() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
   //Below method is to handle bottom navigation onClick:-
